@@ -522,15 +522,13 @@ class Line:
     def __repr__(self):
         return f"Line{(self.x1, self.y1, self.x2, self.y2)}"
     def __iter__(self):
-        either_range = lambda start, stop: range(min(start, stop), max(start, stop)+1)
+        either_range = lambda start, stop: range(start, stop+1) if stop > start else range(start, stop-1, -1)
         if self.x1 == self.x2:
             yield from ((self.x1, y) for y in either_range(self.y1, self.y2))
         elif self.y1 == self.y2:
             yield from ((x, self.y1) for x in either_range(self.x1, self.x2))
         elif abs(self.x2-self.x1) == abs(self.y2-self.y1):
-            first_range = range(self.x1, self.x2+1) if self.x2 > self.x1 else range(self.x1, self.x2-1, -1)
-            second_range = range(self.y1, self.y2+1) if self.y2 > self.y1 else range(self.y1, self.y2-1, -1)
-            yield from ((x, y) for x, y in zip(first_range, second_range))
+            yield from ((x, y) for x, y in zip(either_range(self.x1, self.x2), either_range(self.y1, self.y2)))
         else:
             raise RuntimeError
     @staticmethod
@@ -565,7 +563,6 @@ def part1(puzzle):
     return partx(puzzle, False)
 
 def part2(puzzle):
-    # 23117 is too high
     return partx(puzzle, True)
 
 print(part1(puzzle_input))
