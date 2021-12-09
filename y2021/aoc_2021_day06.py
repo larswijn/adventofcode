@@ -9,7 +9,7 @@ class Fish:
     def new_fish(timer: int):
         Fish._fishes[timer] += 1
     @staticmethod
-    def tick_all(debug=False):
+    def tick_all():
         new_fishes = defaultdict(int)
         for timer, fish_amount in Fish._fishes.items():
             if timer == 0:
@@ -18,8 +18,6 @@ class Fish:
             else:
                 new_fishes[timer-1] += fish_amount
         Fish._fishes = new_fishes
-        if debug:
-            print(dict(Fish._fishes))
     @staticmethod
     def fish_count():
         return sum(Fish._fishes.values())
@@ -27,11 +25,11 @@ class Fish:
     def reset_fishes():
         Fish._fishes = defaultdict(int)
 
-def partx(puzzle, i):
+def partx(puzzle, days):
     Fish.reset_fishes()
     for x in puzzle.split(','):
         Fish.new_fish(int(x))
-    for i in range(i):
+    for _ in range(days):
         Fish.tick_all()
     return Fish.fish_count()
 
