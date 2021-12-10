@@ -13,25 +13,21 @@ def legal_chunks(string: str) -> (bool, str, str):
     expected will be a len > 1 string of the unclosed chunks if success
     found will be an empty string if success
     """
-    valids = {'(': ')', '[': ']', '{': '}', '<': '>'}
-    valids_keys, valids_values = valids.keys(), valids.values()
+    valid = {'(': ')', '[': ']', '{': '}', '<': '>'}
+    valid_keys, valid_values = valid.keys(), valid.values()
 
-    check: list[str] = []
-    for n in string:
-        if n in valids_keys:
-            check += n
-        elif n in valids_values:
-            try:
-                if n == valids[check[-1]]:
-                    check.pop()
-                    continue
-                else:
-                    # wrong closing char
-                    return (False, valids[check[-1]], n)
-            except IndexError:
-                # unexpected closing char (no opening char)
-                return (False, '', n)
-    return (True, ''.join(check[::-1]), '')
+    bracket_stack: list[str] = []
+    for ch in string:
+        if ch in valid_keys:
+            bracket_stack += ch
+        elif ch in valid_values:
+            if len(bracket_stack) == 0:
+                return (False, '', ch)  # unexpected closing char
+            elif ch == valid[bracket_stack[-1]]:
+                bracket_stack.pop()
+            else:
+                return (False, valid[bracket_stack[-1]], ch)  # wrong closing char
+    return (True, ''.join(bracket_stack[::-1]), '')
 
 def part1(puzzle):
     corrupted_lines = [(line, legal_chunks(line)[2]) for line in puzzle.split('\n') if not legal_chunks(line)[0]]
