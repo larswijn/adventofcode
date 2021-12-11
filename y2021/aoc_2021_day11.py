@@ -53,7 +53,7 @@ class Map:
     def tick(self, amount: int = 1) -> (int, bool):
         """
         step `amount` of times for every octopus
-        return total amount of flashes this produced and whether the all octopuses flashed on the final step
+        return total amount of flashes this produced and whether all octopuses flashed on the final step
         """
         self.flashes = 0
         for _ in range(amount):
