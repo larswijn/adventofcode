@@ -16,7 +16,7 @@ def parse_lines(lines: str) -> dict[str, list[str]]:
 
 def sort_graph(graph: dict[str, list[str]]) -> dict[str, list[str]]:
     # sort the graph values by name (start is always first, end is always last)
-    # e.g. ['end', 'C', 'd', 'b', 'start'] -> ['start', 'b', 'C', 'd', 'end']
+    # e.g. ['end', 'C', 'f', 'start', 'b'] -> ['start', 'b', 'C', 'f', 'end']
     # this is purely for readability during debugging
     for key, value in graph.items():
         graph[key] = sorted(value, key=lambda x: chr(0x10ffff if x == 'end' else 0) if x in {'start', 'end'} else x.lower())
