@@ -5,18 +5,22 @@ from collections import defaultdict
 puzzle_input = 'pq-GX\nGX-ah\nmj-PI\ney-start\nend-PI\nYV-mj\nah-iw\nte-GX\nte-mj\nZM-iw\nte-PI\nah-ZM\ney-te\nZM-end\nend-mj\nte-iw\nte-vc\nPI-pq\nPI-start\npq-ey\nPI-iw\nah-ey\npq-iw\npq-start\nmj-GX'.strip()
 test_input = 'start-A\nstart-b\nA-c\nA-b\nb-d\nA-end\nb-end'.strip()
 
-def sort_graph(graph: dict[str, list[str]]) -> dict[str, list[str]]:
-    for key, value in graph.items():
-        graph[key] = sorted(value, key=lambda x: chr(0x10ffff if x == 'end' else 0) if x in {'start', 'end'} else x.lower())
-    return graph
-
 def parse_lines(lines: str) -> dict[str, list[str]]:
+    # get a 'graph' of all the caves: the dictionary version of the puzzle input (bi-directional)
     paths = defaultdict(list)
     for line in lines.split('\n'):
         start, end = line.split('-')
         paths[start].append(end)
         paths[end].append(start)
     return dict(paths)
+
+def sort_graph(graph: dict[str, list[str]]) -> dict[str, list[str]]:
+    # sort the graph values by name (start is always first, end is always last)
+    # e.g. ['end', 'C', 'd', 'b', 'start'] -> ['start', 'b', 'C', 'd', 'end']
+    # this is purely for readability during debugging
+    for key, value in graph.items():
+        graph[key] = sorted(value, key=lambda x: chr(0x10ffff if x == 'end' else 0) if x in {'start', 'end'} else x.lower())
+    return graph
 
 def find_all_paths_part1(graph: dict, start: str, end: str, seen: set[str]) -> list[tuple[str]]:
     paths = []
