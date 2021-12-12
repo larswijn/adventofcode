@@ -31,8 +31,9 @@ def find_all_paths_part1(graph: dict, start: str, end: str, seen: set[str]) -> l
             continue
         if possible == end:
             paths.append((start, end))
-        recursive = find_all_paths_part1(graph, possible, end, seen.copy())
-        paths.extend((start,) + path for path in recursive)
+        else:
+            recursive = find_all_paths_part1(graph, possible, end, seen.copy())
+            paths.extend((start,) + path for path in recursive)
     return paths
 
 def _can_we_access_cave(cave: str, seen: dict[str, int]):
@@ -44,16 +45,15 @@ def _can_we_access_cave(cave: str, seen: dict[str, int]):
 
 def find_all_paths_part2(graph: dict, start: str, end: str, seen: defaultdict[str, int]) -> list[tuple[str]]:
     paths = []
-    if start == 'end':
-        return paths
     seen[start] += 1 if start.islower() else 0
     for possible in graph[start]:
         if not _can_we_access_cave(possible, seen):
             continue
         if possible == end:
             paths.append((start, end))
-        recursive = find_all_paths_part2(graph, possible, end, seen.copy())
-        paths.extend((start,) + path for path in recursive)
+        else:
+            recursive = find_all_paths_part2(graph, possible, end, seen.copy())
+            paths.extend((start,) + path for path in recursive)
     return paths
 
 def part1(puzzle) -> int:
