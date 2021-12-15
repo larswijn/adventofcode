@@ -99,18 +99,49 @@ class Map:
         while frontier:
             _, current_node = frontier.pop(0)
             # print(frontier, current_node)
+            tent_dist_current_node = tent_dist[current_node]
             if current_node == end:
-                return tent_dist[current_node]
+                return tent_dist_current_node
             for neighbour, neighbour_cost in self.get_neighbours(current_node, diagonal=False):
-                neighbour_total_cost = tent_dist[current_node] + neighbour_cost
+                neighbour_total_cost = tent_dist_current_node + neighbour_cost
                 if neighbour_total_cost < tent_dist.get(neighbour, float("inf")):
                     tent_dist[neighbour] = neighbour_total_cost
                     heur_dist = neighbour_total_cost + heuristic(neighbour)
                     heapq.heappush(frontier, (heur_dist, neighbour))
 
+    def _navigate4(self, *args, **kwargs):
+        # personal; assume start = (0, 0) and end = (height, width)
+        start, end = 0, self.height-1 + self.width*(self.width-1)
+        inf = float("inf")
+        costs = {start: 0}
+        def index(p):
+            key = divmod(p, self.width)
+            return self[key]
+        def check(from_, p: int):
+            c = from_ + index(p)
+            if c < costs.get(p, inf):
+                search.append(p)
+                costs[p] = c
+        search = [start]
+        while search:
+            next_search = []
+            for p in search:
+                from_ = costs.get(p, inf)
+                y, x = divmod(p, self.width)
+                if x > 0:
+                    check(from_, p-1)
+                if x + 1 < self.width:
+                    check(from_, p+1)
+                if y > 0:
+                    check(from_, p-self.width)
+                if y + 1 < self.height:
+                    check(from_, p+self.width)
+            search = next_search
+        return costs[end]
+
     def navigate(self, method: int = 3):
         start, end = (0, 0), (self.height-1, self.width-1)
-        navigation_method = {1: self._navigate1, 2: self._navigate2, 3: self._navigate3}[method]
+        navigation_method = {1: self._navigate1, 2: self._navigate2, 3: self._navigate3, 4: self._navigate4}[method]
         cost = navigation_method(start, end)
         return cost
     
